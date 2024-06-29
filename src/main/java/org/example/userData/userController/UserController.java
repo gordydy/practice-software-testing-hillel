@@ -1,34 +1,42 @@
 package org.example.userData.userController;
 
-import io.restassured.response.Response;
-import org.example.BaseController;
-import org.example.userData.models.ChangePasswordRequest;
-import org.example.userData.models.LoginRequest;
-import org.example.userData.models.RegisterUserRequest;
+import org.example.common.BaseController;
+import org.example.common.ResponseDecorator;
+import org.example.userData.models.*;
 
-public class UserController extends BaseController {
-    public Response registerUser(RegisterUserRequest registerUserRequest) {
-        return baseClient()
-                .body(registerUserRequest)
-                .post("/users/register");
+public class UserController extends BaseController<UserController> {
+    public ResponseDecorator<RegisterUserResponse> registerUser(RegisterUserRequest registerUserRequest) {
+        return new ResponseDecorator<>(
+                baseClient()
+                        .body(registerUserRequest)
+                        .post("/users/register"),
+                RegisterUserResponse.class
+        );
     }
 
-    public Response loginUser(LoginRequest loginRequest) {
-        return baseClient()
-                .body(loginRequest)
-                .post("/users/login");
+    public ResponseDecorator<LoginResponse> loginUser(LoginRequest loginRequest) {
+        return new ResponseDecorator<>(
+                baseClient()
+                        .body(loginRequest)
+                        .post("/users/login"),
+                LoginResponse.class
+        );
     }
 
-    public Response deleteUser(String userId, String token) {
-        return baseClient()
-                .header("Authorization", "Bearer " + token)
-                .delete("/users/" + userId);
+    public ResponseDecorator<Void> deleteUser(String userId) {
+        return new ResponseDecorator<>(
+                baseClient()
+                        .delete("users/" + userId),
+                Void.class
+        );
     }
 
-    public Response changePassword (ChangePasswordRequest changePasswordRequest){
-        return baseClient()
-                .body(changePasswordRequest)
-                .post("/users/change-password");
+    public ResponseDecorator<ChangePasswordResponse> changePassword(ChangePasswordRequest changePasswordRequest) {
+        return new ResponseDecorator<>(
+                baseClient()
+                        .post("/users/change-password"),
+                ChangePasswordResponse.class
+        );
     }
 
 }
